@@ -46,6 +46,10 @@ La red está compuesta por 4 edificios interconectados mediante una Red MAN (Met
 - **Edificio Administración (MS6)**: Switch 3650 con PC0 (VLAN ADMIN)
 - **Edificio Central (MS1)**: Switch 3650 con servidores DHCP
 
+### Topología General
+![Topología General](imagenes/topologia_general.png)
+
+
 ### Lista de Adyacencia
 | Dispositivo | Conexiones |
 |-------------|-----------|
@@ -194,6 +198,7 @@ La red está compuesta por 4 edificios interconectados mediante una Red MAN (Met
 | Po7 | PAgP | MS3 | Fa0/4-7 | MS4 | Fa0/1-4 | 4 | L2 |
 | Po8 | PAgP | MS4 | Fa0/5-6 | MS5 | Fa0/1-2 | 2 | L2 |
 
+
 ### Prueba de Tolerancia a Fallos
 
 Se realizó prueba desconectando Fa0/1 de MS9 (miembro de Po1) mientras se ejecutaba `ping 192.188.21.68 repeat 1000` desde PC1. **Resultado: 0 paquetes perdidos** — el EtherChannel redistribuyó el tráfico entre los puertos restantes sin interrupción.
@@ -218,6 +223,7 @@ Se realizó prueba desconectando Fa0/1 de MS9 (miembro de Po1) mientras se ejecu
 | MS3 | 10.4.21.28/30, 192.188.21.64/27, 192.188.21.96/27 |
 
 **Nota:** MS4 y MS5 no tienen vecindad EIGRP directa ya que sus EtherChannels son capa 2. Utilizan rutas estáticas con default route hacia MS3 (`192.188.21.65`) y MS3 redistribuye la ruta estática hacia `192.188.21.128/27`.
+
 
 ### Comandos de verificación
 ```
@@ -277,14 +283,14 @@ interface vlan 40
 
 | Origen | Destino | Acción |
 |--------|---------|--------|
-| VLAN Naranja (10/30) | VLAN Naranja (10/30) | ✅ Permitido |
-| VLAN Verde (20/40) | VLAN Verde (20/40) | ✅ Permitido |
-| VLAN ADMIN (99) | Cualquier VLAN | ✅ Permitido |
-| VLAN Naranja | VLAN Verde | ❌ Bloqueado |
-| VLAN Naranja | VLAN ADMIN | ❌ Bloqueado |
-| VLAN Verde | VLAN Naranja | ❌ Bloqueado |
-| VLAN Verde | VLAN ADMIN | ❌ Bloqueado |
-| Cualquier VLAN | VLAN ADMIN (inicio) | ❌ Bloqueado |
+| VLAN Naranja (10/30) | VLAN Naranja (10/30) |  Permitido |
+| VLAN Verde (20/40) | VLAN Verde (20/40) | Permitido |
+| VLAN ADMIN (99) | Cualquier VLAN | Permitido |
+| VLAN Naranja | VLAN Verde | Bloqueado |
+| VLAN Naranja | VLAN ADMIN | Bloqueado |
+| VLAN Verde | VLAN Naranja | Bloqueado |
+| VLAN Verde | VLAN ADMIN | Bloqueado |
+| Cualquier VLAN | VLAN ADMIN (inicio) | Bloqueado |
 
 ### ACL_NARANJA_IZQ (aplicada en MS9 Vlan10 inbound)
 
@@ -325,7 +331,6 @@ ip access-list extended ACL_VERDE_DER
  deny icmp 192.188.21.96 0.0.0.31 192.188.21.64 0.0.0.31 echo
  permit ip any any
 ```
-
 **Nota técnica:** Se utilizó `icmp echo` en lugar de `deny ip` para bloquear únicamente las solicitudes de ping, permitiendo que las respuestas pasen. Esto resuelve el problema de bloqueo bidireccional que ocurre cuando se deniega todo el tráfico IP.
 
 ---
@@ -340,8 +345,6 @@ ip access-list extended ACL_VERDE_DER
 | MS3 | 30, 40 |
 
 ### Comandos de configuración
-```
-spanning-tree mode pvst
 spanning-tree vlan 10 root primary   ! en MS9
 spanning-tree vlan 20 root primary   ! en MS9
 spanning-tree vlan 99 priority 4096  ! en MS9
