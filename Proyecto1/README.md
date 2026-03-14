@@ -222,7 +222,6 @@ Se realizó prueba desconectando Fa0/1 de MS9 (miembro de Po1) mientras se ejecu
 | MS8 | 10.4.21.4/30, 192.188.21.0/27, 192.188.21.32/27 |
 | MS3 | 10.4.21.28/30, 192.188.21.64/27, 192.188.21.96/27 |
 
-**Nota:** MS4 y MS5 no tienen vecindad EIGRP directa ya que sus EtherChannels son capa 2. Utilizan rutas estáticas con default route hacia MS3 (`192.188.21.65`) y MS3 redistribuye la ruta estática hacia `192.188.21.128/27`.
 
 
 ### Comandos de verificación
@@ -331,7 +330,6 @@ ip access-list extended ACL_VERDE_DER
  deny icmp 192.188.21.96 0.0.0.31 192.188.21.64 0.0.0.31 echo
  permit ip any any
 ```
-**Nota técnica:** Se utilizó `icmp echo` en lugar de `deny ip` para bloquear únicamente las solicitudes de ping, permitiendo que las respuestas pasen. Esto resuelve el problema de bloqueo bidireccional que ocurre cuando se deniega todo el tráfico IP.
 
 ---
 
