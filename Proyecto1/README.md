@@ -345,6 +345,7 @@ ip access-list extended ACL_VERDE_DER
 | MS3 | 30, 40 |
 
 ### Comandos de configuración
+```
 spanning-tree vlan 10 root primary   ! en MS9
 spanning-tree vlan 20 root primary   ! en MS9
 spanning-tree vlan 99 priority 4096  ! en MS9
